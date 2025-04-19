@@ -1,4 +1,4 @@
-const { MongoClient } = require("mongodb");
+const { MongoClient, Decimal128 } = require("mongodb");
 const fs = require("fs");
 
 function createClientMongoDb(
@@ -28,13 +28,19 @@ async function addDocument(
   collectionName = "product"
 ) {
   const client = createClientMongoDb();
+  const newDocuemnt = {
+    name: document.name,
+    description: document.description,
+    price: new Decimal128(document.price.toString()), // store this as 128bit decimal in MongoDB
+    image: document.image,
+  };
 
   try {
     await client.connect();
     const database = client.db(databaseName);
     const collection = database.collection(collectionName);
 
-    return await collection.insertOne(document);
+    return await collection.insertOne(newDocuemnt);
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
   } finally {
