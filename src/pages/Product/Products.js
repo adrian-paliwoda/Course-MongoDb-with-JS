@@ -10,12 +10,14 @@ class ProductsPage extends Component {
       .get('http://localhost:3100/products')
       .then(productsResponse => {
         this.setState({ isLoading: false, products: productsResponse.data });
+        console.log(this.state.products);
       })
       .catch(err => {
         this.setState({ isLoading: false, products: [] });
         this.props.onError('Loading products failed. Please try again later');
         console.log(err);
       });
+      
   }
 
   productDeleteHandler = productId => {
@@ -31,6 +33,7 @@ class ProductsPage extends Component {
         console.log(err);
       });
   };
+  
 
   render() {
     let content = <p>Loading products...</p>;

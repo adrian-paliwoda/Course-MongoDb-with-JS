@@ -31,7 +31,7 @@ async function addDocument(
   const newDocuemnt = {
     name: document.name,
     description: document.description,
-    price: new Decimal128(document.price.toString()), // store this as 128bit decimal in MongoDB
+    price: Decimal128.fromString(document.price.toString()), // store this as 128bit decimal in MongoDB
     image: document.image,
   };
 
@@ -100,7 +100,7 @@ async function findDocument(
     const database = client.db(databaseName);
     const collection = database.collection(collectionName);
 
-    return collection.findOne(filter);
+    return await collection.findOne(filter).toArray();
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
   } finally {
@@ -120,7 +120,7 @@ async function findDocuments(
     const database = client.db(databaseName);
     const collection = database.collection(collectionName);
 
-    return collection.find(filter);
+    return await collection.find(filter).toArray();
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
   } finally {

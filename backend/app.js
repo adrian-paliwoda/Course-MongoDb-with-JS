@@ -6,7 +6,6 @@ const mongoDb = require('mongodb').MongoClient;
 
 const productRoutes = require('./routes/products');
 const authRoutes = require('./routes/auth');
-const connectToMongoDb = require('./connectToMongoDB.js');
 
 const app = express();
 

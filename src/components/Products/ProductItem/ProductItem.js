@@ -11,7 +11,7 @@ const productItem = props => (
     />
     <div className="product-item__content">
       <h1>{props.title}</h1>
-      <h2>${props.price}</h2>
+      <h2>${Number.isFinite(props.price) ? props.price : props.price.$numberDecimal.toString()}</h2>
       <p>{props.text}</p>
       <div className="product-item__controls">
         <Link to={'/products/' + props.id}>Details</Link>

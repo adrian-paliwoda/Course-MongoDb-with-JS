@@ -66,11 +66,11 @@ router.get("/", async (req, res, next) => {
   // Later, this data will be fetched from MongoDB
   let resultProducts = [...products];
 
-  // const productsFromDb = await findDocuments({});
-  // if (productsFromDb) {
-  //   resultProducts = [...products, productsFromDb];
-  // }
-
+  const productsFromDb = await findDocuments({});
+  if (productsFromDb) {
+    resultProducts = [...products, ...productsFromDb];
+  }
+  
   const queryPage = req.query.page;
   const pageSize = 5;
 
@@ -80,6 +80,9 @@ router.get("/", async (req, res, next) => {
       queryPage * pageSize
     );
   }
+
+  console.log(resultProducts);
+
   res.json(resultProducts);
 });
 
