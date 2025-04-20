@@ -80,7 +80,7 @@ async function removeOneDocumentById(
     const database = client.db(databaseName);
     const collection = database.collection(collectionName);
 
-    return await collection.deleteOne({_id: new ObjectId(id.toString())});
+    return await collection.deleteOne({ _id: new ObjectId(id.toString()) });
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
   } finally {
@@ -119,8 +119,21 @@ async function findDocuments(
     await client.connect();
     const database = client.db(databaseName);
     const collection = database.collection(collectionName);
+    const result = [];
 
-    return await collection.find(filter).toArray();
+    const cursor = collection.find(filter);
+
+    for await (const document of cursor) {
+      result.push({
+        _id: document._id,
+        name: document.name,
+        description: document.description,
+        price: document.price.toString(),
+        imageUrl: document.image,
+      });
+    }
+
+    return result;
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
   } finally {
@@ -160,7 +173,7 @@ async function patchDocument(
     await client.connect();
     const database = client.db(databaseName);
     const collection = database.collection(collectionName);
-    
+
     return await collection.replaceOne(filter, updatedDocument);
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
@@ -177,5 +190,5 @@ module.exports = {
   findDocument,
   findDocuments,
   aggregateDocument,
-  patchDocument
+  patchDocument,
 };
