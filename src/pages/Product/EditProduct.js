@@ -41,7 +41,7 @@ class ProductEditPage extends Component {
   editProductHandler = event => {
     event.preventDefault();
     const price = Number.isFinite(this.state.price) || typeof this.state.price === 'string'
-      ? this.state.price : this.state.price.$numberDecimal.toString();
+      ? this.state.price.toString() : this.state.price.$numberDecimal.toString();
 
     if (
       this.state.title.trim() === '' ||

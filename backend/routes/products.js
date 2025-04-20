@@ -92,8 +92,6 @@ router.get("/:id", async (req, res, next) => {
     product = await findDocument({ _id: new ObjectId(req.params.id.toString()) });
   }
 
-  console.log(product);
-  
   res.json(product);
 });
 

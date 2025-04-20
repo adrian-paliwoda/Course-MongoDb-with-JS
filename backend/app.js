@@ -2,7 +2,7 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoDb = require('mongodb').MongoClient;
+const db = require('./database');
 
 const productRoutes = require('./routes/products');
 const authRoutes = require('./routes/auth');
@@ -26,4 +26,15 @@ app.use((req, res, next) => {
 app.use('/products', productRoutes);
 app.use('/', authRoutes);
 
-app.listen(3100);
+db.initDb((err, db)=> {
+  if (err) {
+    console.log(err);
+  } else{
+    app.listen(3100);
+  }
+});
+
+process.on('SIGINT', async () => {
+  await db.close();
+  process.exit();
+});
