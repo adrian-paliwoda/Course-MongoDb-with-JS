@@ -67,7 +67,7 @@ router.get("/", async (req, res, next) => {
   // Return a list of dummy products
   // Later, this data will be fetched from MongoDB
   const page = req.query.page;
-  const pageSize = 15;
+  const pageSize = 2;
 
   let resultProducts = [];
 
