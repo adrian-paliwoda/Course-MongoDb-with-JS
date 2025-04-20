@@ -43,7 +43,7 @@ class App extends Component {
         }
       })
       .catch(err => {
-        this.errorHandler(err.response.data.message);
+        this.errorHandler("Error occured: " + err);
         console.log(err);
         this.setState({ isAuth: false });
       });
