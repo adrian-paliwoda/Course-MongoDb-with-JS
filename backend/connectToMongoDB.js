@@ -1,4 +1,4 @@
-const { MongoClient, Decimal128 } = require("mongodb");
+const { MongoClient, Decimal128, ObjectId } = require("mongodb");
 const fs = require("fs");
 
 function createClientMongoDb(
@@ -80,7 +80,7 @@ async function removeOneDocumentById(
     const database = client.db(databaseName);
     const collection = database.collection(collectionName);
 
-    return await collection.deleteOne({_id: id});
+    return await collection.deleteOne({_id: new ObjectId(id.toString())});
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
   } finally {
@@ -100,7 +100,7 @@ async function findDocument(
     const database = client.db(databaseName);
     const collection = database.collection(collectionName);
 
-    return await collection.findOne(filter).toArray();
+    return await collection.findOne(filter);
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
   } finally {
@@ -160,8 +160,8 @@ async function patchDocument(
     await client.connect();
     const database = client.db(databaseName);
     const collection = database.collection(collectionName);
-
-    return collection.updateOne(filter, updatedDocument);
+    
+    return await collection.replaceOne(filter, updatedDocument);
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
   } finally {

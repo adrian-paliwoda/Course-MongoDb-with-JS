@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const {
   addDocument,
   removeOneDocument,
@@ -80,20 +81,19 @@ router.get("/", async (req, res, next) => {
       queryPage * pageSize
     );
   }
-
-  console.log(resultProducts);
-
   res.json(resultProducts);
 });
 
 // Get single product
 router.get("/:id", async (req, res, next) => {
-  const product = products.find((p) => p._id === req.params.id);
+  let product = products.find((p) => p._id === req.params.id);
 
-  if (product) {
-    product = await findDocument({ _id: req.params.id });
+  if (!product) {
+    product = await findDocument({ _id: new ObjectId(req.params.id.toString()) });
   }
 
+  console.log(product);
+  
   res.json(product);
 });
 
@@ -107,8 +107,6 @@ router.post("", async (req, res, next) => {
     image: req.body.image,
   };
   await addDocument(newProduct);
-
-  console.log(newProduct);
   res.status(201).json({ message: "Product added", productId: "DUMMY" });
 });
 
@@ -121,16 +119,15 @@ router.patch("/:id", async (req, res, next) => {
     price: parseFloat(req.body.price), // store this as 128bit decimal in MongoDB
     image: req.body.image,
   };
-  console.log(updatedProduct);
 
-  await patchDocument({ _id: id }, updatedProduct);
+  await patchDocument({ _id: new ObjectId(req.params.id.toString()) }, updatedProduct);
   res.status(200).json({ message: "Product updated", productId: "DUMMY" });
 });
 
 // Delete a product
 // Requires logged in user
 router.delete("/:id", async (req, res, next) => {
-  await removeOneDocumentById(id);
+  await removeOneDocumentById(req.params.id);
   res.status(200).json({ message: "Product deleted" });
 });
 

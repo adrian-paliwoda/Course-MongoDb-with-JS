@@ -24,7 +24,7 @@ class ProductEditPage extends Component {
           this.setState({
             isLoading: false,
             title: product.name,
-            price: product.price.toString(),
+            price: Number.isFinite(product.price) ? product.price : product.price.$numberDecimal.toString(),
             imageUrl: product.image,
             description: product.description
           });
@@ -40,9 +40,12 @@ class ProductEditPage extends Component {
 
   editProductHandler = event => {
     event.preventDefault();
+    const price = Number.isFinite(this.state.price) || typeof this.state.price === 'string'
+      ? this.state.price : this.state.price.$numberDecimal.toString();
+
     if (
       this.state.title.trim() === '' ||
-      this.state.price.trim() === '' ||
+      price.trim() === '' ||
       this.state.imageUrl.trim() === '' ||
       this.state.description.trim() === ''
     ) {
