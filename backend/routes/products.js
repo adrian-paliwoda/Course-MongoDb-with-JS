@@ -6,6 +6,7 @@ const {
   findDocument,
   patchDocument,
   findDocuments,
+  findDocumentsWithPagination,
 } = require("../connectToMongoDB");
 
 const Router = require("express").Router;
@@ -65,20 +66,28 @@ const products = [
 router.get("/", async (req, res, next) => {
   // Return a list of dummy products
   // Later, this data will be fetched from MongoDB
-  let resultProducts = [...products];
+  const page = req.query.page;
+  const pageSize = 15;
 
-  const productsFromDb = await findDocuments({});
+  let resultProducts = [];
+
+  const productsFromDb = await findDocumentsWithPagination(
+    {},
+    page,
+    pageSize
+  );
   if (productsFromDb) {
+    resultProducts = [...productsFromDb];
+  }
+
+  if (productsFromDb.length < 3) {
     resultProducts = [...products, ...productsFromDb];
   }
-  
-  const queryPage = req.query.page;
-  const pageSize = 5;
 
-  if (queryPage) {
+  if (page) {
     resultProducts = products.slice(
-      (queryPage - 1) * pageSize,
-      queryPage * pageSize
+      (page - 1) * pageSize,
+      page * pageSize
     );
   }
   res.json(resultProducts);
@@ -89,7 +98,9 @@ router.get("/:id", async (req, res, next) => {
   let product = products.find((p) => p._id === req.params.id);
 
   if (!product) {
-    product = await findDocument({ _id: new ObjectId(req.params.id.toString()) });
+    product = await findDocument({
+      _id: new ObjectId(req.params.id.toString()),
+    });
   }
 
   res.json(product);
@@ -118,7 +129,10 @@ router.patch("/:id", async (req, res, next) => {
     image: req.body.image,
   };
 
-  await patchDocument({ _id: new ObjectId(req.params.id.toString()) }, updatedProduct);
+  await patchDocument(
+    { _id: new ObjectId(req.params.id.toString()) },
+    updatedProduct
+  );
   res.status(200).json({ message: "Product updated", productId: "DUMMY" });
 });
 

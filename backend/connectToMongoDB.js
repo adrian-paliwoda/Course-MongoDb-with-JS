@@ -100,6 +100,38 @@ async function findDocuments(
   }
 }
 
+async function findDocumentsWithPagination(
+  filter,
+  page = 1,
+  pageSize = 5,
+  databaseName = shopDatabaseName,
+  collectionName = productCollectionName
+) {
+  try {
+    const database = client.getDb().db(databaseName);
+    const collection = database.collection(collectionName);
+    const result = [];
+    page = page < 1 ? 1 : page;
+    pageSize = pageSize < 1 ? 5 : pageSize;
+
+    const cursor = collection.find(filter).skip(pageSize * (page - 1)).limit(pageSize);
+
+    for await (const document of cursor) {
+      result.push({
+        _id: document._id,
+        name: document.name,
+        description: document.description,
+        price: document.price.toString(),
+        imageUrl: document.image,
+      });
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
+  }
+}
+
 async function aggregateDocument(
   pipeline,
   databaseName = shopDatabaseName,
@@ -137,6 +169,7 @@ module.exports = {
   removeOneDocumentById,
   findDocument,
   findDocuments,
+  findDocumentsWithPagination,
   aggregateDocument,
   patchDocument,
 };
